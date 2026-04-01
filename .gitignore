@@ -1,0 +1,50 @@
+# python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+build/
+dist/
+
+# venvs
+.venv/
+venv/
+env/
+
+# tests and tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+# jupyter
+.ipynb_checkpoints/
+
+# mlflow
+mlruns/
+mlartifacts/
+
+# data and models
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+models/*
+!models/.gitkeep
+*.joblib
+*.pkl
+
+# secrets
+.env
+.env.*
+!.env.example
+
+# editors
+.idea/
+.vscode/
+*.swp
+.DS_Store
