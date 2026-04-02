@@ -1,0 +1,38 @@
+data:
+  raw_dir: data/raw
+  processed_dir: data/processed
+  customer_count: 5000
+  months_of_transactions: 12
+  random_seed: 42
+
+mlflow:
+  tracking_uri: file:./mlruns
+  experiment_name: telecom-intelligence
+
+segmentation:
+  n_clusters: 5
+  dbscan_eps: 0.8
+  dbscan_min_samples: 30
+  features:
+    - recency
+    - frequency
+    - monetary
+    - tenure_months
+    - avg_data_gb
+
+churn:
+  test_size: 0.2
+  random_state: 42
+  models:
+    xgboost:
+      n_estimators: 300
+      max_depth: 6
+      learning_rate: 0.05
+    lightgbm:
+      n_estimators: 300
+      max_depth: 6
+      learning_rate: 0.05
+
+drift:
+  psi_threshold: 0.2
+  ks_alpha: 0.05
