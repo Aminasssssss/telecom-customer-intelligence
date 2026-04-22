@@ -1,0 +1,101 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: telecom-api
+  labels:
+    app: telecom-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: telecom-api
+  template:
+    metadata:
+      labels:
+        app: telecom-api
+    spec:
+      containers:
+        - name: api
+          image: telecom-api:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          env:
+            - name: MLFLOW_TRACKING_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: telecom-config
+                  key: mlflow_uri
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
+          volumeMounts:
+            - name: models
+              mountPath: /app/models
+            - name: data
+              mountPath: /app/data
+      volumes:
+        - name: models
+          persistentVolumeClaim:
+            claimName: telecom-models-pvc
+        - name: data
+          persistentVolumeClaim:
+            claimName: telecom-data-pvc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: telecom-dashboard
+  labels:
+    app: telecom-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: telecom-dashboard
+  template:
+    metadata:
+      labels:
+        app: telecom-dashboard
+    spec:
+      containers:
+        - name: dashboard
+          image: telecom-dashboard:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8501
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          volumeMounts:
+            - name: models
+              mountPath: /app/models
+            - name: data
+              mountPath: /app/data
+      volumes:
+        - name: models
+          persistentVolumeClaim:
+            claimName: telecom-models-pvc
+        - name: data
+          persistentVolumeClaim:
+            claimName: telecom-data-pvc
